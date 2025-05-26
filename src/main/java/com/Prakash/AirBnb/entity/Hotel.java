@@ -35,10 +35,14 @@ public class Hotel {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    // Embedded is used embed another piece of entity that is not meant to be table
     @Embedded
     private HotelContactInfo contactInfo;
 
     @Column(nullable = false)
     private Boolean active;
+
+    @ManyToOne
+    private User owner;
 
 }
