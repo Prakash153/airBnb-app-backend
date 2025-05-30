@@ -2,9 +2,12 @@ package com.Prakash.AirBnb.service.impl;
 
 import com.Prakash.AirBnb.dto.HotelDto;
 import com.Prakash.AirBnb.entity.Hotel;
+import com.Prakash.AirBnb.entity.Room;
 import com.Prakash.AirBnb.exception.ResourceNotFoundException;
 import com.Prakash.AirBnb.repository.HotelRepository;
 import com.Prakash.AirBnb.service.HotelSerive;
+import com.Prakash.AirBnb.service.InventoryService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class HotelServiceImpl implements HotelSerive {
 
     private final HotelRepository hotelRepository;
+    private final InventoryService inventoryService;
     private final ModelMapper modelMapper;
 
 
@@ -53,17 +57,24 @@ public class HotelServiceImpl implements HotelSerive {
     }
 
     @Override
+    @Transactional
     public void deleteHotelById(Long id) {
         log.info(" Trying to delete the hotel with ID {}", id);
-        boolean exists = hotelRepository.existsById(id);
-        if (!exists) throw new ResourceNotFoundException("Hotel not found with Id: " + id);
+        Hotel hotel = hotelRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Hotel Not found with ID: " + id));
 
-        hotelRepository.deleteById(id);
         log.info(" Successfully deleted the hotel with ID {}", id);
-        //TODO: delete the future inventories for this hotel
+        hotelRepository.deleteById(id);
+
+        for (Room room : hotel.getRooms()) {
+            inventoryService. deleteFutureInventories(room);
+        }
 
     }
 
+    @Override
+    @Transactional
     public void activateHotel(Long id) {
         log.info("activating the hotel with ID: {}", id);
         Hotel hotel = hotelRepository
@@ -71,6 +82,10 @@ public class HotelServiceImpl implements HotelSerive {
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel Not found with ID: " + id));
 
         hotel.setActive(true);
-        //TODO: Create  inventory for all the rooms for this hotel
+
+        // assuming only do it once
+        for (Room room : hotel.getRooms()) {
+            inventoryService.initializeRoomFoAYear(room);
+        }
     }
 }
