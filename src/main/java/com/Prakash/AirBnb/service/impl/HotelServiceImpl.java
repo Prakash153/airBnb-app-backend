@@ -1,6 +1,8 @@
 package com.Prakash.AirBnb.service.impl;
 
 import com.Prakash.AirBnb.dto.HotelDto;
+import com.Prakash.AirBnb.dto.HotelInfoDto;
+import com.Prakash.AirBnb.dto.RoomDto;
 import com.Prakash.AirBnb.entity.Hotel;
 import com.Prakash.AirBnb.entity.Room;
 import com.Prakash.AirBnb.exception.ResourceNotFoundException;
@@ -13,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -78,11 +82,11 @@ public class HotelServiceImpl implements HotelSerive {
 
     @Override
     @Transactional
-    public void activateHotel(Long id) {
-        log.info("activating the hotel with ID: {}", id);
+    public void activateHotel(Long hotelId) {
+        log.info("activating the hotel with ID: {}", hotelId);
         Hotel hotel = hotelRepository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Hotel Not found with ID: " + id));
+                .findById(hotelId)
+                .orElseThrow(() -> new ResourceNotFoundException("Hotel Not found with ID: " + hotelId));
 
         hotel.setActive(true);
 
@@ -90,5 +94,20 @@ public class HotelServiceImpl implements HotelSerive {
         for (Room room : hotel.getRooms()) {
             inventoryService.initializeRoomFoAYear(room);
         }
+    }
+
+    @Override
+    public HotelInfoDto getHotelInfoById(Long hotelId) {
+        Hotel hotel = hotelRepository
+                .findById(hotelId)
+                .orElseThrow(() -> new ResourceNotFoundException("Hotel Not found with ID: " + hotelId));
+
+        List<RoomDto> rooms = hotel.getRooms()
+                .stream()
+                .map(element -> modelMapper.map(element, RoomDto.class))
+                .toList();
+        // hotel info dto has two fields hotel and rooms
+        // filling those fields through allArgsConstructor
+        return new HotelInfoDto(modelMapper.map(hotel, HotelDto.class), rooms);
     }
 }
