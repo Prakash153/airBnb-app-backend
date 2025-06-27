@@ -2,6 +2,7 @@ package com.Prakash.AirBnb.controller;
 
 import com.Prakash.AirBnb.dto.HotelDto;
 import com.Prakash.AirBnb.dto.HotelInfoDto;
+import com.Prakash.AirBnb.dto.HotelPriceDto;
 import com.Prakash.AirBnb.dto.HotelSearchRequest;
 import com.Prakash.AirBnb.service.HotelSerive;
 import com.Prakash.AirBnb.service.InventoryService;
@@ -18,8 +19,8 @@ public class HotelBrowseController {
     private final HotelSerive hotelSerive;
 
     @GetMapping("/search")
-    public ResponseEntity<Page<HotelDto>> searchHotels(@RequestBody HotelSearchRequest hotelSearchRequest) {
-        Page<HotelDto> page = inventoryService.searchHotels(hotelSearchRequest);
+    public ResponseEntity<Page<HotelPriceDto>> searchHotels(@RequestBody HotelSearchRequest hotelSearchRequest) {
+        var page = inventoryService.searchHotels(hotelSearchRequest);
         return ResponseEntity.ok(page);
     }
 

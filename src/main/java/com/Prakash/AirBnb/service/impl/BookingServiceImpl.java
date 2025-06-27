@@ -122,4 +122,7 @@ public class BookingServiceImpl implements BookingService {
         user.setId(1L); //TODO: REMOVE DUMMY USER
         return user;
     }
+
+    public static class PricingUpdateService {
+    }
 }
