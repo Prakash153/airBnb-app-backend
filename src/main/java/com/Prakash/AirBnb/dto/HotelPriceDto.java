@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class HotelPriceDto {
     private Hotel hotel ;
-    private double price ;
+    private Double price ;
 
 }

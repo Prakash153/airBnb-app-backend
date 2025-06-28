@@ -29,9 +29,8 @@ public class RoomController {
         return ResponseEntity.ok(roomDtoList);
     }
     @GetMapping("/{roomId}")
-    public ResponseEntity<RoomDto> getRoomById(@PathVariable Long roomId){
-
-        return ResponseEntity.ok( roomService.getRoomById(roomId));
+    public ResponseEntity<RoomDto> getRoomById(@PathVariable Long hotelId, @PathVariable Long roomId) {
+        return ResponseEntity.ok(roomService.getRoomById(roomId));
     }
     @DeleteMapping("/{roomId}")
     public ResponseEntity<Void> deleteRoomById(@PathVariable Long roomId){

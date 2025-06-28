@@ -2,6 +2,7 @@ package com.Prakash.AirBnb.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -14,6 +15,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class HotelMinPrice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

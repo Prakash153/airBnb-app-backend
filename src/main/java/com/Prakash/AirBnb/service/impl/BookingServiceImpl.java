@@ -45,9 +45,10 @@ public class BookingServiceImpl implements BookingService {
                         new ResourceNotFoundException("Hotel not found with id " + bookingRequest.getHotelId()));
         Room room = roomRepository.findById(bookingRequest.getRoomId())
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Hotel not found with id " + bookingRequest.getRoomId()));
+                        new ResourceNotFoundException("Room not found with id " + bookingRequest.getRoomId()));
 
-        List<Inventory> inventoryList = inventoryRepository.findAndLockAvailableInventory(bookingRequest.getRoomId(),
+        List<Inventory> inventoryList = inventoryRepository.findAndLockAvailableInventory(
+                room.getId(),
                 bookingRequest.getCheckInDate(),
                 bookingRequest.getCheckOutDate(),
                 bookingRequest.getRoomsCount());
@@ -87,6 +88,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingDto addGuests(Long bookingId, List<GuestDto> guestDtoList) {
         log.info("adding guests for booking Id : {}" , bookingId);
         Booking booking = bookingRepository.findById(bookingId)
@@ -123,6 +125,5 @@ public class BookingServiceImpl implements BookingService {
         return user;
     }
 
-    public static class PricingUpdateService {
-    }
+
 }
